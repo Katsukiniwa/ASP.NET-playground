@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using sample_app.Models;
+using sample_app.Data;
 
 namespace sample_app.Controllers
 {
@@ -11,9 +12,9 @@ namespace sample_app.Controllers
     [ApiController]
     public class TodoItemsController : ControllerBase
     {
-        private readonly TodoContext _context;
+        private readonly SampleAppContext _context;
 
-        public TodoItemsController(TodoContext context)
+        public TodoItemsController(SampleAppContext context)
         {
             _context = context;
         }

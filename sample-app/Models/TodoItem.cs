@@ -1,5 +1,4 @@
-﻿using System;
-namespace sample_app.Models
+﻿namespace sample_app.Models
 {
     public class TodoItem
     {

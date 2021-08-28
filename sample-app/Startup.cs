@@ -24,7 +24,7 @@ namespace sample_app
             services.AddControllers();
             services.AddDbContext<SampleAppContext>(options => options.UseMySql(
                 Configuration.GetConnectionString("DefaultConnection"),
-                new MySqlServerVersion(new Version(5, 7, 43))
+                new MySqlServerVersion(new Version(5, 7, 35))
             ));
         }
 

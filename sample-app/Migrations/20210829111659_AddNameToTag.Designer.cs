@@ -9,8 +9,8 @@ using sample_app.Data;
 namespace sample_app.Migrations
 {
     [DbContext(typeof(SampleAppContext))]
-    [Migration("20210829041912_CreateSKU")]
-    partial class CreateSKU
+    [Migration("20210829111659_AddNameToTag")]
+    partial class AddNameToTag
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -27,7 +27,12 @@ namespace sample_app.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("ProductId")
+                        .HasColumnType("varchar(255)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
 
                     b.ToTable("Options");
                 });
@@ -52,9 +57,8 @@ namespace sample_app.Migrations
 
             modelBuilder.Entity("sample_app.Models.Product", b =>
                 {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("Description")
                         .HasColumnType("longtext");
@@ -67,61 +71,35 @@ namespace sample_app.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("sample_app.Models.StockKeepingUnitProduct", b =>
+            modelBuilder.Entity("sample_app.Models.ProductTag", b =>
                 {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                    b.Property<string>("ProductId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("TagId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime>("PublicationDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("ProductId", "TagId");
+
+                    b.HasIndex("TagId");
+
+                    b.ToTable("ProductTag");
+                });
+
+            modelBuilder.Entity("sample_app.Models.Tag", b =>
+                {
+                    b.Property<string>("TagId")
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
 
-                    b.Property<int>("PriceWithTax")
-                        .HasColumnType("int");
+                    b.HasKey("TagId");
 
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<long?>("ProductId1")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("StockAmount")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId1");
-
-                    b.ToTable("StockKeepingUnitProducts");
-                });
-
-            modelBuilder.Entity("sample_app.Models.StockKeepingUnitProductOptionValue", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("OptionValueId")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("ProductId")
-                        .HasColumnType("longtext");
-
-                    b.Property<long?>("ProductId1")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("StockKeepingUnitProductId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OptionValueId");
-
-                    b.HasIndex("ProductId1");
-
-                    b.HasIndex("StockKeepingUnitProductId");
-
-                    b.ToTable("stockKeepingUnitProductOptionValues");
+                    b.ToTable("Tags");
                 });
 
             modelBuilder.Entity("sample_app.Models.TodoItem", b =>
@@ -141,6 +119,13 @@ namespace sample_app.Migrations
                     b.ToTable("TodoItems");
                 });
 
+            modelBuilder.Entity("sample_app.Models.Option", b =>
+                {
+                    b.HasOne("sample_app.Models.Product", null)
+                        .WithMany("Options")
+                        .HasForeignKey("ProductId");
+                });
+
             modelBuilder.Entity("sample_app.Models.OptionValue", b =>
                 {
                     b.HasOne("sample_app.Models.Option", "Option")
@@ -150,32 +135,23 @@ namespace sample_app.Migrations
                     b.Navigation("Option");
                 });
 
-            modelBuilder.Entity("sample_app.Models.StockKeepingUnitProduct", b =>
+            modelBuilder.Entity("sample_app.Models.ProductTag", b =>
                 {
                     b.HasOne("sample_app.Models.Product", "Product")
-                        .WithMany("StockKeepingUnitProducts")
-                        .HasForeignKey("ProductId1");
+                        .WithMany("ProductTags")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("sample_app.Models.Tag", "Tag")
+                        .WithMany("ProductTags")
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Product");
-                });
 
-            modelBuilder.Entity("sample_app.Models.StockKeepingUnitProductOptionValue", b =>
-                {
-                    b.HasOne("sample_app.Models.OptionValue", "OptionValue")
-                        .WithMany("StockKeepingUnitProductOptionValues")
-                        .HasForeignKey("OptionValueId");
-
-                    b.HasOne("sample_app.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId1");
-
-                    b.HasOne("sample_app.Models.StockKeepingUnitProduct", null)
-                        .WithMany("StockKeepingUnitProductOptionValues")
-                        .HasForeignKey("StockKeepingUnitProductId");
-
-                    b.Navigation("OptionValue");
-
-                    b.Navigation("Product");
+                    b.Navigation("Tag");
                 });
 
             modelBuilder.Entity("sample_app.Models.Option", b =>
@@ -183,19 +159,16 @@ namespace sample_app.Migrations
                     b.Navigation("OptionValues");
                 });
 
-            modelBuilder.Entity("sample_app.Models.OptionValue", b =>
-                {
-                    b.Navigation("StockKeepingUnitProductOptionValues");
-                });
-
             modelBuilder.Entity("sample_app.Models.Product", b =>
                 {
-                    b.Navigation("StockKeepingUnitProducts");
+                    b.Navigation("Options");
+
+                    b.Navigation("ProductTags");
                 });
 
-            modelBuilder.Entity("sample_app.Models.StockKeepingUnitProduct", b =>
+            modelBuilder.Entity("sample_app.Models.Tag", b =>
                 {
-                    b.Navigation("StockKeepingUnitProductOptionValues");
+                    b.Navigation("ProductTags");
                 });
 #pragma warning restore 612, 618
         }

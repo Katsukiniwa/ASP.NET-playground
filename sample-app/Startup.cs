@@ -22,6 +22,8 @@ namespace sample_app
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
             services.AddDbContext<SampleAppContext>(options => options.UseMySql(
                 Configuration.GetConnectionString("DefaultConnection"),
                 new MySqlServerVersion(new Version(5, 7, 35))

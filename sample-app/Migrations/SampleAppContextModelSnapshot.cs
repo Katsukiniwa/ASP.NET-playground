@@ -25,8 +25,8 @@ namespace sample_app.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
 
-                    b.Property<long?>("ProductId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("ProductId")
+                        .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
 
@@ -55,9 +55,8 @@ namespace sample_app.Migrations
 
             modelBuilder.Entity("sample_app.Models.Product", b =>
                 {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("Description")
                         .HasColumnType("longtext");
@@ -68,6 +67,37 @@ namespace sample_app.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("sample_app.Models.ProductTag", b =>
+                {
+                    b.Property<string>("ProductId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("TagId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime>("PublicationDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("ProductId", "TagId");
+
+                    b.HasIndex("TagId");
+
+                    b.ToTable("ProductTag");
+                });
+
+            modelBuilder.Entity("sample_app.Models.Tag", b =>
+                {
+                    b.Property<string>("TagId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("TagId");
+
+                    b.ToTable("Tags");
                 });
 
             modelBuilder.Entity("sample_app.Models.TodoItem", b =>
@@ -103,6 +133,25 @@ namespace sample_app.Migrations
                     b.Navigation("Option");
                 });
 
+            modelBuilder.Entity("sample_app.Models.ProductTag", b =>
+                {
+                    b.HasOne("sample_app.Models.Product", "Product")
+                        .WithMany("ProductTags")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("sample_app.Models.Tag", "Tag")
+                        .WithMany("ProductTags")
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Tag");
+                });
+
             modelBuilder.Entity("sample_app.Models.Option", b =>
                 {
                     b.Navigation("OptionValues");
@@ -111,6 +160,13 @@ namespace sample_app.Migrations
             modelBuilder.Entity("sample_app.Models.Product", b =>
                 {
                     b.Navigation("Options");
+
+                    b.Navigation("ProductTags");
+                });
+
+            modelBuilder.Entity("sample_app.Models.Tag", b =>
+                {
+                    b.Navigation("ProductTags");
                 });
 #pragma warning restore 612, 618
         }

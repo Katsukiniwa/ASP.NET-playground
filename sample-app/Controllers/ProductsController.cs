@@ -23,13 +23,14 @@ namespace sample_app.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
+            //return await _context.Products.Include(p => p.Tags).ToListAsync();
             //return await _context.Products.Include(p => p.Options).ThenInclude(o => o.OptionValues).ToListAsync();
-            return await _context.Products.Include(p => p.Options).ToListAsync();
+            return await _context.Products.Include(p => p.Options).ThenInclude(o => o.OptionValues).ToListAsync();
         }
 
         // GET: api/Product/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Product>> GetProduct(long id)
+        public async Task<ActionResult<Product>> GetProduct(string id)
         {
             var product = await _context.Products.FindAsync(id);
 
@@ -44,7 +45,7 @@ namespace sample_app.Controllers
         // PUT: api/Product/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProduct(long id, Product product)
+        public async Task<IActionResult> PutProduct(string id, Product product)
         {
             if (id != product.Id)
             {
@@ -99,7 +100,7 @@ namespace sample_app.Controllers
             return NoContent();
         }
 
-        private bool ProductExists(long id)
+        private bool ProductExists(string id)
         {
             return _context.Products.Any(e => e.Id == id);
         }

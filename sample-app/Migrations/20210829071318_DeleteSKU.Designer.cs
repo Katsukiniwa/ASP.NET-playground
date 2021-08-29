@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using sample_app.Data;
 
 namespace sample_app.Migrations
 {
     [DbContext(typeof(SampleAppContext))]
-    partial class SampleAppContextModelSnapshot : ModelSnapshot
+    [Migration("20210829071318_DeleteSKU")]
+    partial class DeleteSKU
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
